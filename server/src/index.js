@@ -28,48 +28,96 @@ const server = express();
 server.use(cors());
 server.use(express.json({ limit: '10mb' }));
 
-//Guardar nueva publicación POST
-server.post('/api/publish', async (req, res) => {
-	const { idUser, userName, idSection, date_response, description, url_job, url_linkedIn, tags } = req.body;
-
-	if (!idUser || !userName || !idSection || !description || !tags) {
-		return res.status(400).json({ error: 'Faltan campos obligatorios' });
-	}
-
-	try {
-		const result =
-			await sql`INSERT INTO publishes (date, title, description, url_job, url_linkedin, fk_id_user, fk_id_section)
-      VALUES (${date_response}, ${userName}, ${description}, ${url_job}, ${url_linkedIn}, ${idUser}, ${idSection})
-      RETURNING id`;
-
-		const publishId = result[0].id;
-
-		await sql`INSERT INTO publishTags (fk_id_publish, fk_id_tag1, fk_id_tag2, fk_id_tag3, fk_id_tag4, fk_id_tag5, fk_id_tag6)
-			VALUES (${publishId}, ${tags[0]}, ${tags[1]}, ${tags[2]}, ${tags[3]}, ${tags[4]}, ${tags[5]})`;
-
-		res.status(200).json({ ok: true });
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ ok: false, error: 'Ha ocurrido un error al guargar la publicación' });
-	}
-});
-
 //Listening
 const port = 4500;
 server.listen(port, () => {
 	console.log(`servidor arrancado: http://localhost:${port}`);
 });
 
-async function getUsersOver() {
-	try {
-		const users = await sql`
-    select user_name, email_name
-    from users
-  `;
-		console.log(users);
-	} catch (err) {
-		console.log(err);
-	}
-}
+//CRUD
 
-getUsersOver();
+//Guardar nueva publicación POST
+server.post('/api/publish', async (req, res) => {
+	const {
+		idUser,
+		userName,
+		idSection,
+		date_response,
+		title,
+		description,
+		url_job,
+		url_linkedIn,
+		idPublishTags,
+		reactionsPublish,
+		tags,
+	} = req.body;
+
+	console.log('Estoy enviando el body', req.body);
+
+	try {
+		//Insertar en tabla publishes
+		const [publish] = await sql`
+			insert into publishes (
+				fk_id_user,
+				date,
+				title,
+				description,
+				url_job, 
+				url_linkedin, 
+				fk_id_section, 
+				fk_id_publish_tags, 
+				fk_reactions_publish
+			) values (
+				${idUser}, 
+				${date_response},
+				${title}, 
+				${description},
+				${url_job},
+				${url_linkedIn},
+				${idSection},
+				${idPublishTags},
+				${reactionsPublish} 
+			) returning id
+		`;
+
+		// const publishId = publish.id;
+
+		//Datos para insertar en publishTags
+		// const tagInserts = tags.map((tagId, index) => {
+		// 	return {
+		// 		kf_id_publish: publishId,
+		// 		[`fk_id_tag${index + 1}`]: tagId,
+		// 	};
+		// });
+
+		// //Insertar en tabla publishTags
+		// await sql`
+		// 	insert into publishTags ${sql(tagInserts)}
+		// `;
+
+		res.status(200).json({ message: 'Ok 200' });
+		// console.log('Dentro del try');
+		// console.log('req: ', req);
+		// console.log('res: ', res);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+		// console.error(error);
+		// console.log('Dentro del catch');
+		// console.log('req: ', req);
+		// console.log('res: ', res);
+	}
+});
+
+// async function getUsersOver() {
+// 	try {
+// 		const users = await sql`
+//     select user_name, email_name
+//     from users
+//   `;
+// 		console.log(users);
+// 	} catch (err) {
+// 		console.log(err);
+// 	}
+// }
+
+// getUsersOver();
