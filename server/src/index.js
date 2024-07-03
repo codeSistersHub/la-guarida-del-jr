@@ -1,10 +1,14 @@
 // const express = require('express');
 // const cors = require('cors');
 import dotenv from 'dotenv';
-dotenv.config();
-import cors from 'cors';
 import express from 'express';
 import postgres from 'postgres';
+import cors from 'cors';
+
+// import publishRoutes from './routes/publish.routes';
+
+//Variables de entorno
+dotenv.config();
 
 //Conexión a BBDD
 const connectionString = process.env.DATABASE_URL;
@@ -27,6 +31,7 @@ const server = express();
 //Configuración de servidor
 server.use(cors());
 server.use(express.json({ limit: '10mb' }));
+// server.use(publishRoutes);
 
 //Listening
 const port = 4500;
@@ -36,11 +41,9 @@ server.listen(port, () => {
 
 //CRUD
 
-//Guardar nueva publicación POST
 server.post('/api/publish', async (req, res) => {
 	const {
 		idUser,
-		userName,
 		idSection,
 		date_response,
 		title,
@@ -52,72 +55,71 @@ server.post('/api/publish', async (req, res) => {
 		tags,
 	} = req.body;
 
-	console.log('Estoy enviando el body', req.body);
+	console.log(req.body);
 
 	try {
-		//Insertar en tabla publishes
 		const [publish] = await sql`
-			insert into publishes (
+			INSERT INTO publishes (
 				fk_id_user,
 				date,
 				title,
 				description,
-				url_job, 
-				url_linkedin, 
-				fk_id_section, 
-				fk_id_publish_tags, 
+				url_job,
+				url_linkedin,
+				fk_id_section,
+				fk_id_publish_tags,
 				fk_reactions_publish
-			) values (
-				${idUser}, 
+			) VALUES (
+				${idUser},
 				${date_response},
-				${title}, 
+				${title},
 				${description},
 				${url_job},
 				${url_linkedIn},
 				${idSection},
 				${idPublishTags},
-				${reactionsPublish} 
-			) returning id
+				${reactionsPublish}
+			) RETURNING id
 		`;
 
-		// const publishId = publish.id;
+		const publishId = publish.id;
 
-		//Datos para insertar en publishTags
-		// const tagInserts = tags.map((tagId, index) => {
-		// 	return {
-		// 		kf_id_publish: publishId,
-		// 		[`fk_id_tag${index + 1}`]: tagId,
-		// 	};
-		// });
+		// Datos para insertar en publishTags
+		const tagInserts = tags.map((tagId) => ({
+			fk_id_publish: publishId,
+			fk_id_tag: tagId,
+		}));
 
-		// //Insertar en tabla publishTags
-		// await sql`
-		// 	insert into publishTags ${sql(tagInserts)}
-		// `;
+		// Insertar en tabla publishTags
+		for (const tag of tagInserts) {
+			await sql`
+				INSERT INTO publishTags (
+					fk_id_publish,
+					fk_id_tag
+				) VALUES (
+					${tag.fk_id_publish},
+					${tag.fk_id_tag}
+				)
+			`;
+		}
 
-		res.status(200).json({ message: 'Ok 200' });
-		// console.log('Dentro del try');
-		// console.log('req: ', req);
-		// console.log('res: ', res);
+		res.status(200).json({ message: 'Publicación y tags creadas correctamente' });
 	} catch (error) {
+		console.error(error);
 		res.status(500).json({ error: error.message });
-		// console.error(error);
-		// console.log('Dentro del catch');
-		// console.log('req: ', req);
-		// console.log('res: ', res);
 	}
 });
 
-// async function getUsersOver() {
-// 	try {
-// 		const users = await sql`
-//     select user_name, email_name
-//     from users
-//   `;
-// 		console.log(users);
-// 	} catch (err) {
-// 		console.log(err);
-// 	}
-// }
+async function getUsersOver() {
+	try {
+		const users = await sql`
+    select user_name, email_name
+    from users
+  `;
+		console.log(users);
+	} catch (err) {
+		console.log(err);
+	}
+}
 
-// getUsersOver();
+getUsersOver();
