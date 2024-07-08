@@ -16,5 +16,9 @@
     "express": "^4.19.2",
     "postgres": "^3.4.4",
     "postgresql": "^0.0.1"
+    
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }
