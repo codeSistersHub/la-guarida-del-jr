@@ -1,6 +1,7 @@
 // const express = require('express');
 // const cors = require('cors');
 import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import postgres from 'postgres';
 import cors from 'cors';
@@ -8,7 +9,6 @@ import cors from 'cors';
 // import publishRoutes from './routes/publish.routes';
 
 //Variables de entorno
-dotenv.config();
 
 //Conexión a BBDD
 const connectionString = process.env.DATABASE_URL;
@@ -42,18 +42,8 @@ server.listen(port, () => {
 //CRUD
 
 server.post('/api/publish', async (req, res) => {
-	const {
-		idUser,
-		idSection,
-		date_response,
-		title,
-		description,
-		url_job,
-		url_linkedIn,
-		idPublishTags,
-		reactionsPublish,
-		tags,
-	} = req.body;
+	const { idUser, idSection, date, title, description, url_job, url_linkedIn, idPublishTags, reactionsPublish, tags } =
+		req.body;
 
 	console.log(req.body);
 
@@ -71,7 +61,7 @@ server.post('/api/publish', async (req, res) => {
 				fk_reactions_publish
 			) VALUES (
 				${idUser},
-				${date_response},
+				${date},
 				${title},
 				${description},
 				${url_job},
@@ -87,18 +77,28 @@ server.post('/api/publish', async (req, res) => {
 		// Datos para insertar en publishTags
 		const tagInserts = tags.map((tagId) => ({
 			fk_id_publish: publishId,
-			fk_id_tag: tagId,
+			fk_id_tag1: tagId,
 		}));
 
 		// Insertar en tabla publishTags
 		for (const tag of tagInserts) {
 			await sql`
-				INSERT INTO publishTags (
+				INSERT INTO "publishTags" (
 					fk_id_publish,
-					fk_id_tag
+					fk_id_tag1,
+					fk_id_tag2,
+					fk_id_tag3,
+					fk_id_tag4,
+					fk_id_tag5,
+					fk_id_tag6,
 				) VALUES (
 					${tag.fk_id_publish},
-					${tag.fk_id_tag}
+					${tag.fk_id_tag1},
+					${tag.fk_id_tag2},
+					${tag.fk_id_tag3},
+					${tag.fk_id_tag4},
+					${tag.fk_id_tag5},
+					${tag.fk_id_tag6},
 				)
 			`;
 		}
