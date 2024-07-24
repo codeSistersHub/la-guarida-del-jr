@@ -1,15 +1,19 @@
 import Menu from './Menu';
 import LoginButton from './Buttons/LoginButton';
 import Logo from './Logo';
-// import codesisters from '../assets/codesisters.webp';
 
 function Header() {
 	return (
-		<header className='flex w-full justify-between'>
-			<Menu />
-			{/* <img src={codesisters} alt='Logo de Code Sisters' className='h-8 justify-center' /> */}
-    <Logo />
-      <LoginButton />
+		<header className='flex justify-between md:p-8 items-center'>
+			<div className='order-1 md:order-2 '>
+				<Menu />
+			</div>
+			<div className='order-2 md:order-1'>
+				<Logo />
+			</div>
+			<div className='order-3 md:order-3'>
+				<LoginButton />
+			</div>
 		</header>
 	);
 }

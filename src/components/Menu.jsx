@@ -23,7 +23,7 @@ const Menu = () => {
 			</div>
 
 			{/* Menú desplegable en dispositivos móviles */}
-			<div className={`${isOpen ? 'block' : 'hidden'} md:hidden`}>
+			<div className={`${isOpen ? 'block absolute' : 'hidden'} md:hidden`}>
 				<ul className='space-y-2'>
 					<li className='p-2'>LLORERÍA</li>
 					<li className='p-2'>
