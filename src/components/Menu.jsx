@@ -1,11 +1,9 @@
-import React from 'react'
+const Menu = ({ isOpen, toggleMenu }) => {
+	return (
+		<>
+			<h1>MENU</h1>
+		</>
+	);
+};
 
-function Menu() {
-  return (
-    <>
-      <h1>Menu</h1>
-    </>
-  )
-}
-
-export default Menu
+export default Menu;
