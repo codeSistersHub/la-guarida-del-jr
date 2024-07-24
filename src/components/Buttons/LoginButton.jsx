@@ -1,11 +1,11 @@
-import React from 'react'
+import login from '../../assets/login.svg';
 
 function LoginButton() {
-  return (
-    <>
-      <h1>Login Button</h1>
-    </>
-  )
+	return (
+		<>
+			<img src={login} alt='Login icon' className='w-8' />
+		</>
+	);
 }
 
-export default LoginButton
+export default LoginButton;

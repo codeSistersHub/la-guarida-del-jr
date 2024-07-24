@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import burger from '../assets/burger.svg';
 
 const Menu = () => {
@@ -30,12 +30,11 @@ const Menu = () => {
 						<button onClick={toggleTrabajoMenu}>TRABAJO</button>
 						{isTrabajoOpen && (
 							<ul className='ml-4 space-y-1'>
-							<li className='p-2'>OFERTAS DE EMPLEO</li>
-							<li className='p-2'>PRUEBAS TÉCNICAS</li>
-							<li className='p-2'>CONSEJOS</li>
-						</ul>
+								<li className='p-2'>OFERTAS DE EMPLEO</li>
+								<li className='p-2'>PRUEBAS TÉCNICAS</li>
+								<li className='p-2'>CONSEJOS</li>
+							</ul>
 						)}
-						
 					</li>
 					<li className='p-2'>FORMACIÓN</li>
 				</ul>

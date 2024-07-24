@@ -1,11 +1,11 @@
-import React from 'react'
+import logo from '../assets/Logo.png';
 
 function Logo() {
-  return (
-    <>
-      <h1>Logo</h1>
-    </>
-  )
+	return (
+		<>
+			<img src={logo} alt='Code Sisters Logo' className='h-8 m-auto' />
+		</>
+	);
 }
 
-export default Logo
+export default Logo;
