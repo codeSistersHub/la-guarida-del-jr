@@ -1,3 +1,4 @@
+import Footer from "../components/Footer"
 import Header from "../components/Header"
 
 function HomePage() {
@@ -5,7 +6,7 @@ function HomePage() {
     <>
     <h1>HomePage</h1>
     <Header />
-      
+      <Footer/>
     </>
   )
 }
