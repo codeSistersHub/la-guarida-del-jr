@@ -33,7 +33,7 @@ const sql = postgres(connectionString,
   database: process.env.DB_DATABASE}
 );
 
-
+/*
 
 async function getUsersOver() {
   try{
@@ -48,28 +48,16 @@ async function getUsersOver() {
 }
 
 getUsersOver()
-//GET
 
-server.get('/api/users', async (req, res) => {
-  try {
-    const users = await sql`
-      SELECT user_name, email_name
-      FROM users
-    `;
-    res.json(users);
-  } catch (err) {
-    console.error('Error al obtener usuarios:', err);
-    res.status(500).json({ error: 'Error al obtener usuarios' });
-  }
-})
-
+*/
+//API/THREADS
 server.get('/api/threads', async (req, res) => {
   console.log('Solicitud recibida en /api/threads'); // Log inicial
 
   const { id_section } = req.query;
   console.log('Parámetro id_section:', id_section); // Log para verificar el id_section
 
-  // Verificar si se ha proporcionado el parámetro id_section
+ 
   if (!id_section) {
     console.log('Falta el parámetro id_section'); // Log para verificar falta de parámetro
     return res.status(400).json({ error: 'Se requiere el parámetro id_section' });
@@ -78,21 +66,12 @@ server.get('/api/threads', async (req, res) => {
   try {
     const publish = await sql`
       SELECT 
-        id_publish, 
-        name_user, 
-        fkid_section, 
-        title_publish, 
-        url_job, 
-        url_linkedIn, 
-        fk_id_tag, 
-        votesSmile, 
-        votesSad, 
-        votesHeart, 
-        fk_id_user, 
-        num_responses, 
-        isfav 
-      FROM publish 
-      WHERE fkid_section = ${id_section}
+        id, 
+        date, 
+        title,
+        description
+      FROM publishes 
+      WHERE fk_id_section = ${id_section}
     `;
     console.log('Resultados de la consulta:', publish); // Log para verificar los resultados de la consulta
     res.json(publish);
@@ -102,3 +81,86 @@ server.get('/api/threads', async (req, res) => {
   }
 });
 
+//API/RESPONSES
+server.get('/api/responses', async (req, res) => {
+  console.log('Solicitud recibida en /api/responses'); 
+
+  const { id_publish } = req.query;
+  console.log('Parámetro id_publishes:', id_publish); 
+
+ 
+  if (!id_publish) {
+    console.log('Falta el parámetro id_pubilshes');
+    return res.status(400).json({ error: 'Se requiere el parámetro id_publishes' });
+  }
+ 
+  try {
+    const response = await sql`
+      SELECT 
+        id, 
+        date, 
+        
+        description
+      FROM responses 
+      WHERE fk_id_publish = ${id_publish}
+    `;
+    console.log('Resultados de la consulta:', response); // Log para verificar los resultados de la consulta
+    res.json(response);
+  } catch (err) {
+    console.error('Error al obtener respuestas:', err);
+    res.status(500).json({ error: 'Error al obtener respuestas' });
+  }
+});
+
+
+server.post('/api/publishes', async (req, res) => {
+  console.log('Solicitud recibida en /api/publishes'); 
+
+  console.log('body,', req.body);
+ const { date, 
+  title,
+  description,
+  url_job,
+  url_linkedin,
+  fk_id_user,
+  fk_id_section,
+  fk_id_publish_tags,
+  fk_reactions_publish } = req.body;
+ 
+  
+  try {
+    const response = await sql`
+      INSERT INTO publishes (
+        date, 
+        title,
+        description,
+        url_job,
+        url_linkedin,
+        fk_id_user,
+        fk_id_section,
+        fk_id_publish_tags,
+        fk_reactions_publish
+      ) VALUES (
+        ${date}, 
+        ${title}, 
+        ${description}, 
+        ${url_job}, 
+        ${url_linkedin}, 
+        ${fk_id_user}, 
+        ${fk_id_section}, 
+        ${fk_id_publish_tags}, 
+        ${fk_reactions_publish}
+      )
+    `;
+    console.log('Resultados de la consulta:', response); // Log para verificar los resultados de la consulta
+    res.status(200).json({ message: 'Publicación creada exitosamente' });
+  } catch (err) {
+    console.error('Error al insertar en la base de datos:', err);
+    res.status(500).json({ error: `Error interno: ${err.message ?? 'desconocido'}` });
+  }
+});
+
+// Iniciar el servidor en un puerto específico
+server.listen(3000, () => {
+  console.log('Servidor escuchando en el puerto 3000');
+});
