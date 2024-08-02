@@ -191,6 +191,34 @@ server.put('/api/publish_reactions', async (req, res) => {
 	}
 });
 
+//PUT reacciones a respuestas
+server.put('/api/response_reactions', async (req, res) => {
+	console.log('Solicitud recibida en /api/response_reactions');
+	console.log('body: ', req.body);
+
+	const { id, tipo, fk_user, fk_id_response } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: 'Parámetro id requerido' });
+	}
+
+	try {
+		const response = await sql`
+      UPDATE response_reactions
+      SET
+        tipo = ${tipo},
+        fk_user = ${fk_user},
+        fk_id_response = ${fk_id_response}
+      WHERE id = ${id}
+    `;
+		console.log('Resultados de la consulta: ', response);
+		res.status(200).json({ message: 'Reacción a la respuesta actualizada con éxito' });
+	} catch (err) {
+		console.error('Error al actualizar en la base de datos: ', err);
+		res.status(500).json({ error: `Error interno: ${err.message ?? 'desconocido'}` });
+	}
+});
+
 // Iniciar el servidor en un puerto específico
 server.listen(4500, () => {
 	console.log('Servidor escuchando en el puerto 4500');
