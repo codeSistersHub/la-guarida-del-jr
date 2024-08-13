@@ -37,19 +37,19 @@ const sql = postgres(connectionString,
 
 
 
-async function getUsersOver() {
-  try{
-	const users = await sql`
-    select user_name, email_name
-    from users
-  `;
-  console.log(users);
-  } catch(err){
-    console.log(err)
-  }
-}
+// async function getUsersOver() {
+//   try{
+// 	const users = await sql`
+//     select user_name, email_name
+//     from users
+//   `;
+//   console.log(users);
+//   } catch(err){
+//     console.log(err)
+//   }
+// }
 
-getUsersOver()
+// getUsersOver()
 
 server.put('/api/edit_publish', async(req,res)=>{
   try {
