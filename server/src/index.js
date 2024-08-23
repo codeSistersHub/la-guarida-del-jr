@@ -37,16 +37,102 @@ const sql = postgres(connectionString,
 
 
 
-async function getUsersOver() {
-  try{
-	const users = await sql`
-    select user_name, email_name
-    from users
-  `;
-  console.log(users);
-  } catch(err){
-    console.log(err)
-  }
-}
+// async function getUsersOver() {
+//   try{
+// 	const users = await sql`
+//     select user_name, email_name
+//     from users
+//   `;
+//   console.log(users);
+//   } catch(err){
+//     console.log(err)
+//   }
+// }
 
-getUsersOver()
+// getUsersOver()
+
+server.put('/api/edit_publish', async(req,res)=>{
+  try {
+    const {id, date, title, description, url_job, url_linkedin} = req.body
+    if (!id || [title, description].some(val => !val || typeof val !== 'string' || val.trim().length === 0 )) {
+      return res.status(400).json({ errorMessage: 'Invalid parameters' });
+    }
+    //Doy por hecho que el usuario ya está verificado.
+    const result = await sql`
+      UPDATE publishes 
+      SET
+        date=${date}
+        ,title=${title}
+        ,description=${description}
+        ,url_job=${url_job ?? ''}
+        ,url_linkedin=${url_linkedin ?? ''}
+      WHERE id=${id}
+    `;
+    if (result.count === 0) {
+      res.status(404).json({ errorMessage: '"id" not found' });
+    }
+    res.status(200).end();    
+  } catch (err){
+    console.error(err);
+    res.status(500).json({errorMessage:'A error has occured', errorDetail: err});
+  }
+})
+
+server.put('/api/edit_response', async (req,res)=>{
+  try{
+    const {id, date, description} = req.body
+    if(!id || !date || description.trim() < 1){
+       return res.status(400).json({ errorMessage: 'Invalid parameters' });
+    }
+    const result = await sql`
+    UPDATE responses 
+      SET
+        date=${date}
+        ,description=${description}
+      WHERE id=${id}
+    `;
+    if (result.count === 0) {
+      res.status(404).json({ errorMessage: '"id" not found' });
+    }
+    res.status(200).end(); 
+  }catch(err) {
+     res.status(500).json({errorMessage:'A error has occured', errorDetail: err});
+  }
+})
+
+server.delete('/api/delete_publish', async (req,res)=>{
+  try{
+    const {id} = req.body
+    if(!id ){
+       return res.status(400).json({ errorMessage: 'Invalid parameters' });
+    }
+    const result = await sql`
+    DELETE FROM publishes 
+    WHERE id=${id}
+    `;
+    if (result.count === 0) {
+      res.status(404).json({ errorMessage: '"id" not found' });
+    }
+    res.status(200).end(); 
+  }catch(err) {
+     res.status(500).json({errorMessage:'A error has occured', errorDetail: err});
+  }
+})
+server.delete('/api/delete_response', async (req,res)=>{
+  try{
+    const {id} = req.body
+    if(!id ){
+       return res.status(400).json({ errorMessage: 'Invalid parameters' });
+    }
+    const result = await sql`
+    DELETE FROM responses
+    WHERE id=${id}
+    `;
+    if (result.count === 0) {
+      res.status(404).json({ errorMessage: '"id" not found' });
+    }
+    res.status(200).end(); 
+  }catch(err) {
+     res.status(500).json({errorMessage:'A error has occured', errorDetail: err});
+  }
+})

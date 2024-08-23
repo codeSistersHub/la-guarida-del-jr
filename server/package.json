@@ -14,7 +14,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "postgres": "^3.4.4",
-    "postgresql": "^0.0.1"
+    "nodemon": "^3.1.4",
+    "postgres": "^3.4.4"
   }
 }
