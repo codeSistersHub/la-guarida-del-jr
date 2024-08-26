@@ -1,5 +1,3 @@
-// const express = require('express');
-// const cors = require('cors');
 import dotenv from 'dotenv';
 dotenv.config();
 import cors from 'cors'
@@ -34,22 +32,6 @@ const sql = postgres(connectionString,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE}
 );
-
-
-
-// async function getUsersOver() {
-//   try{
-// 	const users = await sql`
-//     select user_name, email_name
-//     from users
-//   `;
-//   console.log(users);
-//   } catch(err){
-//     console.log(err)
-//   }
-// }
-
-// getUsersOver()
 
 server.put('/api/edit_publish', async(req,res)=>{
   try {
